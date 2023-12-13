@@ -1,8 +1,8 @@
-import oai_access
+import openai_access
 
 
 def create_assistant():
-    asst = oai_access.create_assistant(
+    asst = openai_access.create_assistant(
         "TestAssistant",
         "gpt-4-1106-preview",
         """You are an expert in the stock market and able to provide up to date info on stock prices 

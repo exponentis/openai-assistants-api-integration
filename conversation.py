@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 
-import oai_access
+import openai_access
 from function_tools import local_functions
 from db_access import store
 from transitions import Machine, State
@@ -84,16 +84,16 @@ class AssistantProxy():
         self.run_id = None
 
     def create_thread(self):
-        thread: Thread = oai_access.create_thread()
+        thread: Thread = openai_access.create_thread()
         conv = XConversation(thread_id=thread.id, default_assistant_id=self.asst_id)
         store(conv)
         self.thread_id = thread.id
     def create_message(self, msg):
-        thread_message: ThreadMessage = oai_access.create_message( self.thread_id, "user", msg
+        thread_message: ThreadMessage = openai_access.create_message( self.thread_id, "user", msg
         )
 
     def create_run(self):
-        run: Run = oai_access.create_run(thread_id=self.thread_id, assistant_id=self.asst_id)
+        run: Run = openai_access.create_run(thread_id=self.thread_id, assistant_id=self.asst_id)
         self.run_id = run.id
 
     def start_processing(self, user_message):
@@ -111,7 +111,7 @@ class AssistantProxy():
     async def process(self):
         #TODO timeout
         while (True):
-            run_status = oai_access.get_run( thread_id=self.thread_id, run_id=self.run_id)
+            run_status = openai_access.get_run( thread_id=self.thread_id, run_id=self.run_id)
             print(f"run status: {run_status.status}")
             store(XRunDetail(run_id=self.run_id, type="check_run_status", output=run_status.status))
 
@@ -128,14 +128,14 @@ class AssistantProxy():
                 raise Exception(f"Non-actionable status: {run_status.status}")
 
     def retrieve_completed_message(self):
-        messages = oai_access.get_thread_messages(thread_id=self.thread_id)
+        messages = openai_access.get_thread_messages(thread_id=self.thread_id)
         response = messages.data[0].content[0].text.value
         store(XRunDetail(run_id=self.run_id, type="retrieve_asst_msg", output=response))
         return response
 
     def submit_tools_output(self, evt):
         tool_outputs = [{"tool_call_id": result["call_id"], "output":json.dumps(result["output"])} for result in evt]
-        oai_access.submit_tool_outputs(
+        openai_access.submit_tool_outputs(
             thread_id=self.thread_id,
             run_id=self.run_id,
             tool_outputs=tool_outputs
