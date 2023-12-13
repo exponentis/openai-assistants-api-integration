@@ -44,7 +44,7 @@ conversation_runs = Table(
     Column("created_at", DateTime, nullable=False)
 )
 
-run_steps = Table(
+run_details = Table(
     "run_details",
     metadata,
     Column("id", Integer, primary_key=True),
