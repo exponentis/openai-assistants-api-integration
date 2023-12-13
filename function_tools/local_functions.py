@@ -1,3 +1,5 @@
+from random import randint
+
 import yfinance as yf
 
 def execute_function(name, arguments):
@@ -15,7 +17,12 @@ def get_stock_price(symbol: str) -> float:
     return price
 
 def buy_or_sell(symbol:str, price:str):
-    print("function buy_or_sell got called")
-    return "buy"
+    score = randint(1, 3)
+    match score:
+        case 1 : return "buy"
+        case 2 : return "sell"
+        case 3 : return "hold"
+
+
 
 
