@@ -1,34 +1,45 @@
 # Resilient integration with the OpenAI Assistants API
 
-This is a pilot toolkit for a well-designed Python-based integration with OpenAI's Assistants API, built to withstand the 
-fast-evolving AI technology landscape. 
+This is a pilot toolkit for a well-designed Python-based integration with OpenAI's Assistants API, designed to withstand the fast-evolving AI technology landscape. 
 
 ## Introduction
 
-The Assistants API allows clients to create customized assistants and run conversations and interactions following a 
-sequence of steps, all one-way, from the client to theOpenAI API (see 
-[OpenAI Assistants documentation](https://platform.openai.com/assistants). When doing so, it is 
-important to follow software engineering best practices, to make sure our systems are future-ready for the rapid 
-advancements in the AI technology field. The main ideas behind this toolkit design are:
+The Assistants API allows clients to create customized assistants and run complex conversations following a 
+sequence of steps (see [OpenAI Assistants documentation](https://platform.openai.com/assistants). The interactions are one-way, from the client to theOpenAI API, as OpenAI does not make call-backs or send notifications. When building integrations with the Assistants API, it is important to follow software engineering best practices, to make sure our systems are future-ready for the rapid advancements in the AI technology field. Here are the main ideas behind the design of this toolkit design:
 
-1. Our AI-powered business use cases and flows run in our local systems, interacting with external AI services, such as 
-OpenAI's Assistants API, and we need to maintain an **end-to-end perspective** when implementing integrations with such 
-external systems.
+1. Maintain an **end-to-end perspective** of the flows that have assistants as particpants; the integration with the external API is just one piece of the puzzle. One will need full visibility into the execution of the end-to-end AI-powered workflows.
 
 
-2. The conversation between the client system and the Assistants API follows a **pre-defined interaction script**, modeled as a 
-**state machine**. The main actors are a **User/Client Proxy** and an **Assistant Proxy**, interacting indirectly via a **Mediator** that is 
-implemented (formally or informally) as a state machine.
+2. The conversation between the client system and the Assistants API follows a **pre-defined interaction script**, modeled as a **state machine**. The main actors are a **User Proxy** and an **Assistant Proxy**, interacting indirectly under the supervision of a **Mediator** who owns the interaction script.
 
 
-3. All calls to the Assistants API fall under the **responsibility of the Asistant Proxy, who acts as an active player 
-in the client eco-system**, detecting changes  on the remote Assistant side and interacting directly with the conversation 
-Mediator, and indirectly with the User Proxy.
+3. The **Assistant Proxy** acts on behalf of the Assistant, exclusively managing the calls to the Assistants API, and interacting indirectly with the User Proxy via the Mediator. 
 
 
-4. **The User Proxy acts on behalf of the user and the system** is reponsible for interacting (indirectly) with the Assistant Proxy on, 
-passing messages from the User and making internal calls as needed (such as executing function tools registered with the 
-assistant).
+4. **The User Proxy** acts on behalf of the user and other internal systems that, interacting indirectly with the Assistant Proxy via the Mediator and making supporting internal calls as needed (such as executing function tools registered with the assistant when instructed so by the Assistant, via the Mediator).
+
+## Design
+
+The diagram below shows how the User Proxy, Assistant Proxy and Mediator work together within the overall tech ecosystem to implement a clean integration with the Assistants API:
+
+![Arch](diagrams/arch.svg)
+
+The Assistant Proxy makes regular calls to the Assistants API to check on the Run status, through polling, and processes the return status accordingly, with the help of the Mediator. The User Proxy initiates a conversation exchange through a prompt, and assists with function calls as needed.
+
+As mentioned earlier, the Mediator is implemented (formally or informally) as a state machine, with transitions as shown below:
+
+![Arch](diagrams/state.svg)
+
+The dotted-line transitions are allowed in case the "running" state is missed when polling the Assisstans API (which can happen when processing is faster than the polling interval, or when polling is delayed, like it may happen when the app is running in debug mode with break points)
+
+The sequence diagram below shows the detailed interaction script during a conversation exchange:
+
+![Arch](diagrams/seq.svg)
+
+There are two implementations for the Mediator:
+
+- MediatorBasic, a plain Python implementation, that does not enforce pre-conditions for state transitions
+- MediatorStateMachine, with all bells and whistle, using [transition](https://github.com/pytransitions/transitions), an excellent state machine implementation in Python.
 
 ## Dependencies
 
