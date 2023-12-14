@@ -131,6 +131,7 @@ class AssistantProxy():
         messages = openai_access.get_thread_messages(thread_id=self.thread_id)
         response = messages.data[0].content[0].text.value
         store(XRunDetail(run_id=self.run_id, type="retrieve_asst_msg", output=response))
+        store(XMessage(thread_id=self.thread_id, source="asst_proxy", content=response))
         return response
 
     def submit_tools_output(self, evt):
