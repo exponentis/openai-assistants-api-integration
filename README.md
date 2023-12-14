@@ -54,7 +54,8 @@ python-dotenv~=1.0.0
 
 ## Setup
 
-### Code and virtual environment
+### Code and dependencies
+
 Clone this repository and use your favorite IDE to open it as a project:
 
 ```bash
