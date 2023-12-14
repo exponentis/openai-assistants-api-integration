@@ -1,4 +1,4 @@
-# Resilient OpenAI Assistants API integration
+# Resilient integration with the OpenAI Assistants API
 
 This is a pilot toolkit for a well-designed Python-based integration with OpenAI's Assistants API, built to withstand the 
 fast-evolving AI technology landscape. 
