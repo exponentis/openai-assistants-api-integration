@@ -76,7 +76,7 @@ Copy the coontents of the file `.env_sample` to a new file named `.env` and upda
 
 ### Assistant
 
-Run assistant_setup.py to create the sample assitant:
+Run assistant_setup.py to create the sample assisßtant:
 
 ```python
 python assistant_setup.py
