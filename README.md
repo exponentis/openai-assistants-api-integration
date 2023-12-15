@@ -1,6 +1,6 @@
-# Resilient integration with the OpenAI Assistants API
+# OpenAI Assistants API Integration toolkit
 
-This is a pilot toolkit for a well-designed Python-based integration with OpenAI's Assistants API, designed to withstand the fast-evolving AI technology landscape. 
+This is a pilot toolkit for a well-designed, resilient Python-based integration with OpenAI's Assistants API, built to withstand the fast-evolving AI technology landscape. The deisgn can be used for other similar API integrations as well.
 
 ## Introduction
 
@@ -32,6 +32,13 @@ As mentioned earlier, the Mediator is implemented (formally or informally) as a 
 
 ![State](diagrams/state.svg)
 
+The states are based on:
+
+1. the external Assistant's Run status
+2. the status of supporting internal calls, related to executing required actions
+
+and provide a perspective of the overall execution rathar than just the Assistant's progress.
+
 The dotted-line transitions are allowed in case the "running" state is missed when polling the Assisstans API (which can happen when processing is faster than the polling interval, or when polling is delayed, like it may happen when the app is running in debug mode with break points)
 
 The sequence diagram below shows the detailed interaction script during a conversation exchange:
@@ -52,7 +59,7 @@ There are two implementations for the Mediator:
 
 ## User Interface
 
-One can build user interfaces with ease, through a clean integration with the User Proxy and optionally listen to events emotted by the Mediator. The sample streamlit-based UI allows users to start conversations with an assistant that is configured with 2 functions as tools, and function calls are displayed real time as part of the chat window. See screenhot below:
+Using the integration toolkit, one can build user interfaces with ease, through a clean integration with the User Proxy and optionally listen to events emotted by the Mediator. The sample streamlit-based UI allows users to start conversations with an assistant that is configured with 2 functions as tools, and function calls are displayed real time as part of the chat window. See screenhot below:
 
 ![Chat](screenshots/chat.png)
 
