@@ -1,4 +1,4 @@
-# OpenAI Assistants API Integration toolkit
+# Future-ready OpenAI Assistants API Integration Toolkit
 
 This is a pilot toolkit for a well-designed, resilient Python-based integration with OpenAI's Assistants API, built to withstand the fast-evolving AI technology landscape. The deisgn can be used for other similar API integrations as well.
 
@@ -26,7 +26,7 @@ The diagram below shows how the User Proxy, Assistant Proxy and Mediator work to
 
 ![Arch](diagrams/arch.svg)
 
-The Assistant Proxy makes regular calls to the Assistants API to check on the Run status (polling), and processes the return status accordingly, with the help of the Mediator. The User Proxy initiates a conversation exchange through a prompt, and assists with function calls as needed.
+The Assistant Proxy makes regular calls to the Assistants API to check on the Run status (polling), and processes the return status accordingly, with the help of the Mediator. The User Proxy initiates a conversation exchange through a prompt, and assists with function call execution as needed.
 
 As mentioned earlier, the Mediator is implemented (formally or informally) as a state machine, with transitions as shown below:
 
@@ -41,21 +41,16 @@ and provide a perspective of the overall execution rathar than just the Assistan
 
 The dotted-line transitions are allowed in case the "running" state is missed when polling the Assisstans API (which can happen when processing is faster than the polling interval, or when polling is delayed, like it may happen when the app is running in debug mode with break points)
 
+## Implementation Details
+
 The sequence diagram below shows the detailed interaction script during a conversation exchange:
 
 ![Sequence](diagrams/seq.svg)
 
-## Implementation Details
-
-### User Proxy
-
-### Assistants Proxy
-
-### Mediator
 There are two implementations for the Mediator:
 
-- MediatorBasic, a plain Python implementation, that does not enforce pre-conditions for state transitions
-- MediatorStateMachine, with all bells and whistle, using [transition](https://github.com/pytransitions/transitions), an excellent state machine implementation in Python.
+- `MediatorBasic`, a plain Python implementation, that does not enforce pre-conditions for state transitions
+- `MediatorStateMachine`, with all bells and whistle, using [transition](https://github.com/pytransitions/transitions), an excellent state machine implementation in Python.
 
 ## User Interface
 
