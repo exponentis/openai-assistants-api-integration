@@ -134,7 +134,7 @@ class AssistantProxy():
         store(XMessage(thread_id=self.thread_id, source="asst_proxy", content=response))
         return response
 
-    def submit_tools_output(self, evt):
+    def submit_tool_outputs(self, evt):
         tool_outputs = [{"tool_call_id": result["call_id"], "output":json.dumps(result["output"])} for result in evt]
         openai_access.submit_tool_outputs(
             thread_id=self.thread_id,
@@ -146,7 +146,7 @@ class AssistantProxy():
             store(XRunDetail(run_id=self.run_id, type="submit_tool_outputs",
                              tool=f"{result['function_name']}-{result['call_id']}", input=result['output']))
 
-        self.mediator.tools_output_submitted(evt);
+        self.mediator.tool_outputs_submitted(evt);
 
 class MediatorBasic():
 
@@ -168,7 +168,7 @@ class MediatorBasic():
         pub.sendMessage("sentMessage", evt=f"📡 Sent message, run_id {self.asst_proxy.run_id}: {user_message}")
 
     def running(self, status):
-        self.state = 'active'
+        self.state = 'running'
         self.store_state()
 
     def action_required(self, run_status):
@@ -179,15 +179,15 @@ class MediatorBasic():
     def tools_executed(self, tool_results):
         self.state = 'tools_executed'
         self.store_state()
-        self.asst_proxy.submit_tools_output(tool_results)
+        self.asst_proxy.submit_tool_outputs(tool_results)
         for result in tool_results:
             function_name = result["function_name"]
             arguments = result["arguments"]
             output = json.dumps(result["output"])
             pub.sendMessage("executedTool", evt=f"🔧 {function_name} 🔧 : {arguments} ➡️ {output}")
 
-    def tools_output_submitted(self, evt):
-        self.state = 'tools_output_submitted'
+    def tool_outputs_submitted(self, evt):
+        self.state = 'tool_outputs_submitted'
         self.store_state()
 
     def assistant_message_retrieved(self, asst_message):
@@ -214,9 +214,9 @@ class MediatorStateMachine():
             State(name='started', on_enter=self.on_started),
             State(name='requires_action'),
             State(name='tools_executed', on_enter=self.on_tools_executed),
-            State(name='tools_output_submitted'),
+            State(name='tool_outputs_submitted'),
             State(name='completed', on_enter=self.on_completed),
-            State(name='active')
+            State(name='running')
         ]
 
         machine = Machine( model=self, states=states, initial='new', send_event=False)
@@ -229,19 +229,19 @@ class MediatorStateMachine():
 
         # the fastest way through the cycle, with actions
         transition('action_required', 'started', 'requires_action', after='_execute_tools')
-        transition('tools_executed', 'requires_action', 'tools_executed', after='_submit_tools_output')
-        transition('tools_output_submitted', 'tools_executed', 'tools_output_submitted')
-        transition('assistant_message_retrieved', 'tools_output_submitted', 'completed', after='_receive_asst_message')
+        transition('tools_executed', 'requires_action', 'tools_executed', after='_submit_tool_outputs')
+        transition('tool_outputs_submitted', 'tools_executed', 'tool_outputs_submitted')
+        transition('assistant_message_retrieved', 'tool_outputs_submitted', 'completed', after='_receive_asst_message')
 
         # action after action
-        transition('action_required', 'tools_output_submitted', 'requires_action', after='_execute_tools')
+        transition('action_required', 'tool_outputs_submitted', 'requires_action', after='_execute_tools')
 
-        # accomodate for the 'active' state (i.e.'in_progress' and 'queued')
-        transition('action_required', 'active', 'requires_action', after='_execute_tools')
-        transition('assistant_message_retrieved', 'active', 'completed', after='_receive_asst_message')
-        transition('running', 'started', 'active')
-        transition('running', 'tools_output_submitted', 'active')
-        transition('running', 'active', 'active')
+        # accomodate for the 'running' state (i.e.'in_progress' and 'queued')
+        transition('action_required', 'running', 'requires_action', after='_execute_tools')
+        transition('assistant_message_retrieved', 'running', 'completed', after='_receive_asst_message')
+        transition('running', 'started', 'running')
+        transition('running', 'tool_outputs_submitted', 'running')
+        transition('running', 'running', 'running')
 
         # restart
         transition('set_user_message', 'completed', 'ready', after='_start_processing')
@@ -264,8 +264,8 @@ class MediatorStateMachine():
     def _execute_tools(self, evt):
         self.user_proxy.execute_tools(evt)
 
-    def _submit_tools_output(self, evt):
-        self.asst_proxy.submit_tools_output(evt)
+    def _submit_tool_outputs(self, evt):
+        self.asst_proxy.submit_tool_outputs(evt)
 
     def _store_state(self, *args):
         print(f"**state**: {self.state}")
