@@ -56,15 +56,17 @@ The sequence diagram below shows the detailed "scripted interaction" during a co
  There are two implementations for the Mediator:
 
 - `MediatorBasic`, a plain Python implementation, that does not enforce pre-conditions for state transitions
-- `MediatorStateMachine`, with all bells and whistle, using [transition](https://github.com/pytransitions/transitions), an excellent state machine implementation in Python.
+- `MediatorStateMachine`, with all bells and whistle, using [transitions](https://github.com/pytransitions/transitions), an excellent state machine implementation in Python.
 
 ## User Interface
 
-Using the integration toolkit, one can build user interfaces with ease, through a clean integration with the User Proxy and optionally listen to events published by the Mediator. The included streamlit-based Chat App allows users to carry conversations with assistants, by providing their IDs. A test assistant configuration is included to deploy and use in order to showcase the available toolkit features. It is configured with 2 functions as tools, and function calls are displayed real time as part of the chat window during the conversation. See screenhot below:
+A streamlit-based Chat App allows users to carry conversations with assistants, integrated upon providing their ID. A test assistant configuration is also included, to be deployed and used in order to explore the available toolkit features. It is configured with 2 "toy" functions as tools. See screenhot below:
 
 ![Chat](screenshots/chat.png)
 
-In addition, also included is a separate streamlit page that allows users to browse past conversations and review logs (including function calls, and second-by-second polling status). It uses aggrid for table display. See screenhot below:
+Please note how the function calls trigerred by the assistant via required actions are displayed as part of the conversation, with "System" as source. The execution steps are also shown when the exchange is completed, and one can show them real time as well if needed.
+
+As the conversation takes place, relevant data and events (Threads, Runs, Calls, etc.) are stored in a database with a simple schema (the toolkit is using sqlite and SqlAlchemy). The data can be visualized using a user interface (see the screenshot below, showing data related to certain parts of a conversation; built with Streamlit and Aggrid and included in the toolkit).
 
 ![HistoryChat](screenshots/hist.png)
 
