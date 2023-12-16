@@ -1,10 +1,10 @@
-# Toolkit for building resilient, future-ready Assistants API integrations
+# Toolkit for building resilient, future-ready OpenAI Assistants API integrations
 
 This is a pilot toolkit for building well-designed, resilient Python-based integrations with OpenAI's Assistants API, built to withstand the fast-evolving AI technology landscape. 
 
 The deisgn decouples the internal and external functionality related to the integration, using a Mediator (based on a state-machine) in the middle to orchestrate a "scripted interaction" at the boundary of the system. This design allows the system to stay flexible and evolve with ease, accomodating future external and internal changes. It can also be used for other similar API integrations.
 
-## Introduction
+## Motivation
 
 The Assistants API allows clients to create customized assistants and run complex conversations following a 
 sequence of steps (see [OpenAI Assistants documentation](https://platform.openai.com/assistants)). The interactions are one-way, from the client to the OpenAI API, as OpenAI does not make call-backs or send notifications. When building integrations with the Assistants API, it is important to follow software engineering best practices, to make sure our systems are future-ready for the rapid advancements in the AI technology field. 
@@ -104,10 +104,12 @@ Clone this repository and use your favorite IDE to open it as a project:
 git clone https://github.com/exponentis/openai-assistants-api-integration.git
 ```
 
-Create a virtual environment, activate it and install dependencies:
+Create a virtual environment, activate it and install dependencies. Thiis is how it works if you use anaconda:
 
 ```bash
 cd openai-assistants-api-integration
+conda create -n  asstapi python=3.11 anaconda
+source activate asstapi 
 pip install -r requirements.txt
 ```
 
@@ -118,7 +120,7 @@ Copy the coontents of the file `.env_sample` to a new file named `.env` and upda
 
 ### Assistant
 
-Run `assistant_setup.py` to create the sample assistant:
+Edit the script `assistant_setup.py` to make sure you are using the right model (some users may only have access to gpt-3.5) and run it:
 
 ```python
 python assistant_setup.py
