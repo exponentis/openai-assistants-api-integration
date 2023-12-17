@@ -112,7 +112,7 @@ class AssistantProxy():
         #TODO timeout
         while (True):
             run_status = openai_access.get_run( thread_id=self.thread_id, run_id=self.run_id)
-            print(f"run status: {run_status.status}")
+            #print(f"run status: {run_status.status}")
             store(XRunDetail(run_id=self.run_id, type="check_run_status", output=run_status.status))
 
             if run_status.status == 'completed':
@@ -197,7 +197,7 @@ class MediatorBasic():
         pub.sendMessage("retrievedMessage", evt="📡 Retrieved message : " + asst_message)
 
     def store_state(self):
-        print(f"**state**: {self.state}")
+        #print(f"**state**: {self.state}")
         run_id = self.asst_proxy.run_id or "TBD"
         store(XRunDetail(run_id=run_id, type="state_change", output=self.state))
 
@@ -268,7 +268,7 @@ class MediatorStateMachine():
         self.asst_proxy.submit_tool_outputs(evt)
 
     def _store_state(self, *args):
-        print(f"**state**: {self.state}")
+        #print(f"**state**: {self.state}")
         run_id = self.asst_proxy.run_id or "TBD"
         store(XRunDetail(run_id=run_id, type="state_change", output=self.state))
 
