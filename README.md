@@ -136,8 +136,39 @@ and the schema:
 ```python
 python db_setup.py
 ```
+## Using the toolkit
 
-## Running the app
+Run
+
+```python
+python terminal.chat.py
+```
+
+This code is actually all it takes to start chatting from a terminal (the contents of `terminal.chat.py`):
+
+```python
+import conversation
+import asyncio
+import os
+
+async def run():
+    asst_id = os.environ["ASSISTANT_ID"]
+    user_proxy = conversation.start_conversation(asst_id)
+    while (True):
+        user_input = input("\nUser: ")
+        if (user_input.lower() == "exit"):
+            break
+        user_proxy.send_user_message(user_input)
+        response = await user_proxy.get_assistant_message()
+        print("Assistant: ")
+        print(response)
+
+if __name__ == '__main__':
+        asyncio.run(run())
+```
+
+
+## Running the Streamlit Chat app
 
 Open the chat page to start conversations with assistants by running:
 
@@ -147,6 +178,8 @@ streamlit run streamlit-chat.py
 
 The page loads the Assistant ID from `.env` as default; it can be overriden before starting a new 
 conversation.
+
+## Browsing the history and log
 
 To open the history page and browse data stored in the database, run:
 
