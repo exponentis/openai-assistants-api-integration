@@ -138,13 +138,9 @@ python db_setup.py
 ```
 ## Using the toolkit
 
-Run
 
-```python
-python terminal.chat.py
-```
 
-This code is actually all it takes to start chatting from a terminal (the contents of `terminal.chat.py`):
+The code below is all it takes to start chatting from a terminal:
 
 ```python
 import conversation
@@ -167,6 +163,11 @@ if __name__ == '__main__':
         asyncio.run(run())
 ```
 
+That's the contents of `terminal.chat.py`; run it as below:
+
+```python
+python terminal.chat.py
+```
 
 ## Running the Streamlit Chat app
 
