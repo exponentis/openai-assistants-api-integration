@@ -122,7 +122,7 @@ class AssistantProxy():
             elif run_status.status == 'requires_action':
                 self.mediator.action_required(run_status)
             elif run_status.status in ['in_progress', 'queued']:
-                self.mediator.running(run_status.status)
+                self.mediator.hearbeat(run_status.status)
                 await asyncio.sleep(1)
             else:
                 raise Exception(f"Non-actionable status: {run_status.status}")
@@ -167,7 +167,7 @@ class MediatorBasic():
         self.store_state()
         pub.sendMessage("sentMessage", evt=f"📡 Sent message, run_id {self.asst_proxy.run_id}: {user_message}")
 
-    def running(self, status):
+    def hearbeat(self, status):
         self.state = 'running'
         self.store_state()
 
@@ -239,9 +239,9 @@ class MediatorStateMachine():
         # accomodate for the 'running' state (i.e.'in_progress' and 'queued')
         transition('action_required', 'running', 'requires_action', after='_execute_tools')
         transition('assistant_message_retrieved', 'running', 'completed', after='_receive_asst_message')
-        transition('running', 'started', 'running')
-        transition('running', 'tool_outputs_submitted', 'running')
-        transition('running', 'running', 'running')
+        transition('hearbeat', 'started', 'running')
+        transition('hearbeat', 'tool_outputs_submitted', 'running')
+        transition('hearbeat', 'running', 'running')
 
         # restart
         transition('set_user_message', 'completed', 'ready', after='_start_processing')
