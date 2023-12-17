@@ -13,7 +13,7 @@ def execute_function(name, arguments):
 def get_stock_price(symbol: str) -> float:
     stock = yf.Ticker(symbol)
     price = stock.history(period="1d")['Close'].iloc[-1]
-    print("function get_stock_price got called")
+    #print("function get_stock_price got called")
     return price
 
 def buy_or_sell(symbol:str, price:str):
