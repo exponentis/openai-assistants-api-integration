@@ -115,7 +115,7 @@ pip install -r requirements.txt
 
 ### Configuration
 
-Copy the coontents of the file `.env_sample` to a new file named `.env` and update the `OPEN_API_KEY` variable (see 
+Copy the contents of the file `.env_sample` to a new file named `.env` and update the `OPEN_API_KEY` variable (see 
 [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys))
 
 ### Assistant
@@ -125,7 +125,7 @@ Edit the script `assistant_setup.py` to make sure you are using the right model 
 ```python
 python assistant_setup.py
 ```
-Capture the assistent ID (either from your OpenAI gpt+ account, or from the terminal after running the above script) and 
+Capture the assistant ID (either from your OpenAI gpt+ account, or from the terminal after running the above script) and 
 update the `ASSISTANT_ID` variable in the `.env` file
 
 ### Database
